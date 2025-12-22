@@ -3,11 +3,27 @@
   ></script>
   <script src="/js/carbon-loader.js"></script>
   <script>
+    function setTheme() {
+      const rootElement = document.documentElement;
+      console.log('Root element:', rootElement);
+      rootElement.classList.remove(
+        'cds-theme-zone-g90', 'cds-theme-zone-white'
+      );
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          rootElement.classList.add('cds-theme-zone-g90');
+      } else {
+          rootElement.classList.add('cds-theme-zone-white');
+      }
+    }    
+    setTheme();
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", setTheme);
+    
     const carbonComponents = [
       'grid',
       'ui-shell'
     ];
     window.loadCarbonComponents(carbonComponents);
+
   </script>
   <script src="/js/rest-client.js"></script>
   <link

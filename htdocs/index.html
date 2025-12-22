@@ -6,12 +6,15 @@
   <title>Integration Jam-in-a-box</title>
   <!--#include file="includes/head.html" -->
   <script>
-    window.loadCarbonComponents(['tile']);
+    window.loadCarbonComponents([
+      'button', 'form',  'grid', 'select', 'text-input', 'textarea',
+      'tile'
+    ]);
   </script>
 </head>
 <body>
-  <div class="hero"><div class="hero-content"></div></div>
-<!--#include file="includes/header.html" -->
+  <div><div class="hero-content"></div></div>
+  <!--#include file="includes/header.html" -->
   <cds-grid class="main-content">
     <cds-column md="2">
       <cds-tile id="lab-materials" color-scheme="g10">
@@ -37,54 +40,83 @@
     </cds-column>
     <cds-column md="4" id="rest-client">
       <cds-tile>
-        <div class="form-section" id="host-selector">
-          <h2>REST Client</h2>
-          <label for="host">Host:</label>
-          <h3>Method and path</h3>
-          <div class="field-wrapper">
-            <label for="method">Method:</label>
-            <select name="method" title="method">
-              <option name="CONNECT">CONNECT</option>
-              <option name="DELETE">DELETE</option>
-              <option name="GET" class="highlight">GET</option>
-              <option name="HEAD">HEAD</option>  
-              <option name="OPTIONS">OPTIONS</option>
-              <option name="PATCH">PATCH</option>  
-              <option name="POST" selected class="highlight">POST</option>
-              <option name="PUT" class="highlight">PUT</option>  
-              <option name="TRACE">TRACE</option>  
-            </select>
+        <cds-form id="rest-client-form">
+          <div class="form-section" id="host-selector">
+            <h2>REST Client</h2>
+            <div class="field-wrapper">
+              <cds-form-item id="host-selector"></cds-form-item>
+            </div>
+            <h3>Method and path</h3>
+            <div class="field-wrapper">
+              <cds-form-item>
+                <cds-select name="method" title="method" label-text="HTTP Method"
+                  multiple="false" value="POST">
+                  <cds-select-item value="CONNECT">CONNECT</cds-select-item>
+                  <cds-select-item value="DELETE">DELETE</cds-select-item>
+                  <cds-select-item value="GET" class="highlight">GET</cds-select-item>
+                  <cds-select-item value="HEAD">HEAD</cds-select-item>  
+                  <cds-select-item value="OPTIONS">OPTIONS</cds-select-item>
+                  <cds-select-item value="PATCH">PATCH</cds-select-item>  
+                  <cds-select-item selected="" value="POST" class="highlight">POST</cds-select-item>
+                  <cds-select-item value="PUT" class="highlight">PUT</cds-select-item>  
+                  <cds-select-item value="TRACE">TRACE</cds-select-item>  
+                </cds-select>
+              </cds-form-item>
+            </div>
+            <div class="field-wrapper">
+              <cds-text-input
+                label="Path"
+                title="path" type="text" name="path"
+                placeholder="/path/to/resource"
+              ></cds-text-input>
+            </div>
           </div>
-          <div class="field-wrapper">
-            <label for="method">Path:</label>
-            <input
-              title="path" type="text" name="path" label="path"
-              placeholder="/path/to/resource"
-            />
+          <div class="form-section" id="request-headers">
+            <h3>Headers</h3>
+            <div class="field-wrapper">
+              <cds-text-input
+                label="Authorization Token"
+                title="Authorization Token"
+                name="auth-token"
+                type="text"
+                placeholder="Bearer xxxxx.yyyyy.zzzzz"
+              ></cds-text-input>
+            </div>
+            <div class="field-wrapper">
+              <cds-textarea
+                label="Additional Headers"
+                name="additional-headers"
+                type="text"
+                placeholder="Header: value"
+              ></cds-textarea>
+            </div>
           </div>
-        </div>
-        <div class="form-section" id="request-headers">
-          <h3>Headers</h3>
-          <div class="field-wrapper">
-            <label for="contentType">Content-Type</label>
-            <select name="contentType" title="contentType">
-              <option name="application/json">application/json</option>
-              <option name="application/xml charset=utf-8" selected>application/xml charset=utf-8</option>
-              <option name="text/plain">text/plain</option>
-            </select>
+          <div class="form-section" id="request-body">
+            <div class="field-wrapper">
+              <cds-form-item>
+                <cds-select name="contentType" label-text="Content-Type"
+                  multiple="false">
+                  <cds-select-item value="application/json">application/json</cds-select-item>
+                  <cds-select-item value="application/xml charset=utf-8" selected>application/xml charset=utf-8</cds-select-item>
+                  <cds-select-item value="text/plain">text/plain</cds-select-item>
+                </cds-select>
+              </cds-form-item>
+            </div>
+            <div class="field-wrapper">
+              <cds-textarea
+                label="Body content"
+                name="body-content"
+                title="content"
+                placeholder='{"key":"value"}'
+              ></cds-textarea>
+            </div>
           </div>
-          <div class="additional-headers"></div>
-          <button class="major" name="add-header">Add header</button>
-        </div>
-        <div class="form-section" id="request-body">
-          <label for="body-content">Body content</label>
-          <textarea name="body-content" title="content"></textarea>
-        </div>
-        <div class="form-section" id="send">
-          <button class="major" type="button" name="send">Send</button>
-        </div>
-        <div class="response-section" id="response-headers"></div>
-        <div class="response-section" id="response-body"></div>
+          <div class="form-section" id="send">
+            <cds-button class="major" type="button" name="send">Send</cds-button>
+          </div>
+          <div class="response-section" id="response-headers"></div>
+          <div class="response-section" id="response-body"></div>
+        </cds-form>
       </cds-tile>
     </cds-column>
   </cds-grid>

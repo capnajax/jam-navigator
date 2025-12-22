@@ -1,13 +1,35 @@
 @import url("plex-fonts/plex.css");
 
+:root {
+  --theme-background: var(--cds-background);
+  --theme-text: var(--cds-text-primary);
+  --cds-field: white;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-background: #262626; /* background for g90 */
+    --theme-text: #f4f4f4; /* text for g90 */
+    --cds-field: #262626;
+  }
+}
+
 body {
   font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
-  margin: 0;
+  margin-top: 4rem;
   padding: 0;
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+}
+a:any-link:active, a:any-link:hover {
+  text-decoration: none;
+  color: var(--cds-link-primary-hover);
+}
+a:any-link {
+  color: var(--cds-link-primary);
 }
 
 cds-header {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--cds-border-inverse);
 }
 
 .hero {
@@ -19,33 +41,16 @@ cds-header {
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: linear-gradient(to bottom, white 0%, transparent 2rem, white 100%), url('./hero.svg');
+    background-image: linear-gradient(to bottom, var(--background) 0%, transparent 2rem, white 100%), url('./hero.svg');
     filter: blur(1px);
   }
 }
 
 :root {
-  --main-bg-color: #ffffff;
-  --section-bg-color: #f2f4f8;
-  --error-bg-color: #ffb3b8;
-  --error-border-color: #750e13;
-  --error-text-color: #da1e28;
-  --main-text-color: #000000;
-  --button-bg-active: #001d6c;
-  --button-bg: #0043ce;
-  --button-bg-disabled: #697077;
-
   --cds-grid-columns: 8
 }
 
-body {
-  font-size: 10pt;
-  font-family: IBM Plex Sans, Helvetica, Arial, sans-serif;
-  margin: 0;
-}
-
 cds-tile {
-  background-color: var(--section-bg-color);
   margin: 1rem;
   padding: 1rem;
   ul {
@@ -55,10 +60,15 @@ cds-tile {
       margin-bottom: 0.32rem;
     }
   }
+  h2 {
+    margin-top: 0;
+  }
 }
 
-cds-tile#lab-materials {
-  background-color: #d0e2ff;
+@media (prefers-color-scheme: light) {
+  cds-tile#lab-materials {
+    background-color: #d0e2ff;
+  }
 }
 
 cds-tile#services-tile {
@@ -84,7 +94,7 @@ cds-tile#services-tile {
     dd.clipboard::before {
       content: '\2750';
       cursor: pointer;
-      margin-right: 0.25em;
+      margin-right: 0.35em;
       opacity: 0.32;
       font-size: 0.8em;
     }
@@ -92,12 +102,75 @@ cds-tile#services-tile {
       background-color: #00000010;
       border-radius: 0.1em;
     }
+    @media (prefers-color-scheme: dark) {
+      dd.clipboard::before {
+        opacity: 0.62;
+      }
+      dd.clipboard:hover {
+        background-color: #ffffff20;
+      }
+    }
     .italic {
       font-style: italic;
     }
   }
 }
 
-.rest-client {
-  display: none;
+#rest-client {
+  .form-section {
+    display: block;
+    .field-wrapper {
+      display: block;
+      margin-top: 1.13rem;
+      label {
+        display: inline-block;
+        min-width: 6rem;
+      }
+      label + select, label + input {
+        display: inline-block;
+        width: calc(100% - 8rem);
+        margin: 0.25rem 0;
+      }
+      label + select {
+        height: 1.5rem;
+      }
+      label + input {
+        height: 1.25rem;
+        width: calc(100% - 9rem);
+      }
+      #host-selected {
+        margin-top: 0.5rem;
+        .description:not(:empty)::before {          
+          font-size: 0.5rem;
+          content: "ℹ︎";
+          background-color: var(--cds-icon-interactive);
+          color: var(--cds-icon-inverse);
+          border-radius: 50%;
+          padding: 0 0.15rem;
+          margin-right: 0.25rem;
+          position: relative;
+          top: -0.125rem;
+        }
+        .description:not(:empty) {
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+        }
+        .base-url {
+          font-size: 0.8rem;
+          font-style: italic;
+        }
+        .header-field-wrapper {
+          input {
+            width: calc(100% - 4rem);
+          }
+          button {
+            width: 3em;
+          }
+        }
+      }
+    }
+  }
+  .cds--select, .cds--text-input, .cds--textarea {
+    background-color: white
+  }
 }

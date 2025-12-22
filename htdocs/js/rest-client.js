@@ -14,16 +14,18 @@ class UA {
   set config(newConfig) {
     this.#config = newConfig;
 
-    const select = $(`<select name="host" />`);
-    select.append('<option value="" disabled selected>Select host...</option>');
+    const select = $(`<cds-select name="host" label-text="Select host"/>`);
+    select.append('<cds-select-item value="" disabled selected>' +
+      'Select host...</cds-select-item>');
     for (const hostIdx in this.config.hosts) {
       const host = this.config.hosts[hostIdx];
       const n = `${host.baseUrl}`;
-      const option = $(`<option value="${hostIdx}">${this.config.hosts[hostIdx].name || n}</option>`);
+      const option = $(`<cds-select-item value="${hostIdx}">${
+        this.config.hosts[hostIdx].name || n}</cds-select-item>`);
       select.append(option);
     }
-    $('label[for="host"]').after(select);
-    select.on('change', event => {
+    $('cds-form-item#host-selector').append(select);
+    $('cds-select[name=host]').on('cds-select-selected', event => {
       this.host = this.config.hosts[select.val()];
     });
 
@@ -40,7 +42,7 @@ class UA {
     //   }
     // }
 
-    $('select[name=method]').on('change', event => {
+    $('cds-select[name=method]').on('cds-select-selected', event => {
       this.uiState_requestBody();
     });
 
@@ -160,7 +162,7 @@ class UA {
       return $('#host-selected').first();
     }
     if (getHostSelectedDiv().length === 0) {
-      $('select[name="host"]').after('<div id="host-selected"></div>');
+      $('cds-form-item#host-selector').after('<div id="host-selected"></div>');
     }
     const hostSelectedDiv = getHostSelectedDiv();
     hostSelectedDiv.empty();
@@ -173,32 +175,12 @@ class UA {
     this.uiState();
   }
 
-  set ready(newReadiness) {
-    this.#ready = newReadiness;
+  get method() {
+    return $('cds-select[name="method"]').val();    
   }
 
-  addHeaderField() {
-    let newHeaderField =
-      $('<div class="header-field-wrapper field-wrapper"></div>');
-    let textField = $(
-      '<input type="text" placeholder="Header: value content"></input>');
-    textField.on('blur', () => {
-      const value = textField.val();
-      if (!value || /^([a-zA-Z0-9-]+):/.test(value)) {
-        // non-empty but invalid header
-        newHeaderField.removeClass('error');
-      } else {
-        newHeaderField.addClass('error');
-      }
-    });
-    let removeButton = $('<button class="x">&times</button>');
-    removeButton.on('click', () => {      
-      newHeaderField.remove();
-      this.uiState();
-    });
-    newHeaderField.append(textField);
-    newHeaderField.append(removeButton);
-    $('.additional-headers').append(newHeaderField);
+  set ready(newReadiness) {
+    this.#ready = newReadiness;
   }
 
   addError(e) {
@@ -243,7 +225,6 @@ class UA {
     };
 
     let configPromises = captureRejectionMessages([
-      this.init_headers(),
       this.init_loadConfig(),
       this.init_controls()
     ]);
@@ -259,13 +240,6 @@ class UA {
 
   init_controls() {
     $('button[name="send"]').on('click', () => { this.send(); });
-  }
-
-  init_headers() {
-    $('button[name="add-header"]').on('click', event => {
-      this.addHeaderField()
-    });
-    this.addHeaderField();
   }
 
   init_loadConfig() {
@@ -286,9 +260,7 @@ class UA {
   }
 
   isBodyable() {
-    return ['POST', 'PUT', 'PATCH'].includes(
-      $('select[name=method]').first().val()
-    );
+    return ['POST', 'PUT', 'PATCH'].includes(this.method);
   }
 
   send() {
