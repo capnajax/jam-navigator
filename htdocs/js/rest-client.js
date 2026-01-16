@@ -292,7 +292,7 @@ class UA {
     $('cds-button[name="send"]').after(anxietyKiller);
     $('.response-section').empty();
     fetch(
-      '/proxy/' + this.host.student + '/' + this.host.origin + '/' + path,
+      '/proxy/' + this.host.service + '/' + path,
       fetchOpts
     )
       .then(async res => {

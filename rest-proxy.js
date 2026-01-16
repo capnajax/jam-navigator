@@ -85,6 +85,9 @@ function serveProxy(req, res) {
     	path: (urlObj.pathname === '/' ? '' : urlObj.pathname) + '/' +
       	(pathname.startsWith('/') ? pathname.slice(1) : pathname)
 	  };
+		if (serviceConfig.port) {
+			options.port = serviceConfig.port;
+		}
   	if (urlObj.username) {
     	if (urlObj.password) {
       	options.auth = `${urlObj.username}:${urlObj.password}`;
