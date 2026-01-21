@@ -216,7 +216,6 @@ class UA {
   }
 
   init() {
-
     var captureRejectionMessages = promises => {
       promises.forEach(p => p && p.catch(e => {
         this.addError(e);
@@ -291,51 +290,52 @@ class UA {
     anxietyKiller.html('&middot;&nbsp;&middot;&nbsp;&middot;');
     $('cds-button[name="send"]').after(anxietyKiller);
     $('.response-section').empty();
+
     fetch(
       '/proxy/' + this.host.service + '/' + path,
       fetchOpts
     )
-      .then(async res => {
-        let responseString = '';
-        console.log(res);
-        res.headers.entries().forEach(h => {
-          console.log('header', h);
-        });
-        $('#response-headers').append(
-          $(`<p class="status">${res.headers.get('x-proxy-status')}</p>`)
-        );
-        const headers = JSON.parse(atob(res.headers.get('x-proxy-headers')));
-        console.log('decoded headers', headers);
-        for (const headerKey of Object.keys(headers)) {
-          let v = headers[headerKey];
-          if (!Array.isArray(v)) {
-            v = [v];
-          }
-          for (const value of v) {
-            const headerLine = $(`<div class="header"><span class="key">${
-              headerKey}</span>: <span class="value">${value}</span></div>`);
-            $('#response-headers').append(headerLine);
-          }
-        }
-        const responsePre = $('<pre></pre>');
-        responsePre.text(await res.text());
-        $('#response-body').append(responsePre);
-      })
-      .catch(e => {
-          console.log('exception', e);
-        this.addError({
-          code: 'fetch-fail',
-          message: `Request failed`,
-          detail: e
-        });
-        $('#response-headers').append(
-          '<p class="error">Error: No response</p>'
-        );
-      })
-      .finally(() => {
-        $('#response-headers').prepend('<h2>Response</h2>');
-        anxietyKiller.remove();
+    .then(async res => {
+      console.log(res);
+      const j = await res.json();
+      console.log('j', j);
+
+      let responseDiv = $('#response-body');
+      responseDiv.empty();
+      let responseStatus= $('<div class="response-status"></div>');
+      responseStatus.text(`${j.statusCode} ${j.statusMessage}`);
+      responseDiv.append(responseStatus);
+      let responseHeaders = $('<div class="response-headers"></div>');
+      for (const k of Object.keys(j.headers)) {
+        let responseHeader = $('<div class="response-header"></div>');
+        let key = $('<span class="response-header-key"></span>');
+        key.text(k);
+        let value = $('<code class="response-header-value"></code>');
+        value.text(j.headers[k]);
+        responseHeader.append(key);
+        responseHeader.append(value);
+        responseHeaders.append(responseHeader);
+      }
+      let responseBody = $('<pre class="response-body"></pre>');
+      responseBody.text(j.body);
+      responseDiv.append(responseHeaders);
+      responseDiv.append(responseBody);
+    })
+    .catch(e => {
+        console.log('exception', e);
+      this.addError({
+        code: 'fetch-fail',
+        message: `Request failed`,
+        detail: e
       });
+      $('#response-headers').append(
+        '<p class="error">Error: No response</p>'
+      );
+    })
+    .finally(() => {
+      $('#response-headers').prepend('<h2>Response</h2>');
+      anxietyKiller.remove();
+    });
   }
 
   uiState() {
@@ -355,10 +355,12 @@ class UA {
 
   uiState_sendButton() {
     let enabled=true;
+    console.log('sendButton', this.host, this.path, this.method);
     if (!this.host) {
+      console.log('sendButton DISABLING');
       enabled=false;
     }
-    $('cds-utton[name="send"]').prop('disabled', !enabled);
+    $('cds-button[name="send"]').attr('disabled', !enabled);
   }
 
 }
